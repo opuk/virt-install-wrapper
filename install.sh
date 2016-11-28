@@ -18,18 +18,18 @@ pushd $WORKDIR
 #runcmd:
 #  - [ yum, remove, cloud-init, -y ]
 
-cat > user-data << EOF
-#cloud-config
-password: fedora
-chpasswd: {expire: False}
-ssh_pwauth: True
-timezone: Europe/Stockholm
-EOF
+#cat > user-data << EOF
+##cloud-config
+#password: fedora
+#chpasswd: {expire: False}
+#ssh_pwauth: True
+#timezone: Europe/Stockholm
+#EOF
+#echo -e "instance-id: $NAME\nlocal-hostname: $NAME" > meta-data
+#genisoimage -output $NAME-cidata.iso -volid cidata -joliet -rock user-data meta-data
 cp $IMAGE $NAME.qcow2
-echo -e "instance-id: $NAME\nlocal-hostname: $NAME" > meta-data
-genisoimage -output $NAME-cidata.iso -volid cidata -joliet -rock user-data meta-data
 echo "$(date -R) Power off the vm to finish installation."
-virt-install --import --name $NAME --ram $MEM --vcpus $CPU --disk $NAME.qcow2,format=qcow2,bus=virtio --disk $NAME-cidata.iso,device=cdrom --network bridge=virbr0,model=virtio --os-type=linux
+virt-install --import --name $NAME --ram $MEM --vcpus $CPU --disk $NAME.qcow2,format=qcow2,bus=virtio --network bridge=virbr0,model=virtio --os-type=linux
 
 if $RESIZE_DISK; then
   echo "$(date -R) Resizing the disk..."
