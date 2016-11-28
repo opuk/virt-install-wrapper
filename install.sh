@@ -5,14 +5,13 @@ MEM=$2
 CPU=2
 
 WORKDIR=/var/lib/libvirt/images
-#IMAGE=$WORKDIR/Fedora-Cloud-Base-23-20151030.x86_64.qcow2
-#IMAGE=$WORKDIR/Fedora-Cloud-Atomic-23-20160405.x86_64.qcow2
-#IMAGE=$WORKDIR/rhel-atomic-cloud-7.2-12.x86_64.qcow2
-IMAGE=$WORKDIR/rhel-guest-image-7.2-20160302.0.x86_64.qcow2
+#IMAGE=$WORKDIR/Fedora-Cloud-Base-24-1.2.x86_64.qcow2
+#IMAGE=$WORKDIR/CentOS-7-x86_64-GenericCloud.qcow2
+IMAGE=$WORKDIR/rhel-guest-image-7.3-35.x86_64.qcow2
 
 RUN_AFTER=true
-RESIZE_DISK=true
-DISK_SIZE=40G
+RESIZE_DISK=false
+DISK_SIZE=20G
 
 pushd $WORKDIR
 
