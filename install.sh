@@ -5,28 +5,16 @@ MEM=$2
 CPU=2
 
 WORKDIR=/var/lib/libvirt/images
-#IMAGE=$WORKDIR/Fedora-Cloud-Base-24-1.2.x86_64.qcow2
-#IMAGE=$WORKDIR/CentOS-7-x86_64-GenericCloud.qcow2
-IMAGE=$WORKDIR/rhel-guest-image-7.3-35.x86_64.qcow2
+#IMAGE=$WORKDIR/Fedora-Cloud-Base-25-1.3.x86_64.qcow2
+IMAGE=$WORKDIR/CentOS-7-x86_64-GenericCloud.qcow2
+#IMAGE=$WORKDIR/rhel-guest-image-7.3-35.x86_64.qcow2
 
 RUN_AFTER=true
-RESIZE_DISK=false
+RESIZE_DISK=true
 DISK_SIZE=20G
 
 pushd $WORKDIR
 
-#runcmd:
-#  - [ yum, remove, cloud-init, -y ]
-
-#cat > user-data << EOF
-##cloud-config
-#password: fedora
-#chpasswd: {expire: False}
-#ssh_pwauth: True
-#timezone: Europe/Stockholm
-#EOF
-#echo -e "instance-id: $NAME\nlocal-hostname: $NAME" > meta-data
-#genisoimage -output $NAME-cidata.iso -volid cidata -joliet -rock user-data meta-data
 cp $IMAGE $NAME.qcow2
 echo "$(date -R) Power off the vm to finish installation."
 virt-install --import --name $NAME --ram $MEM --vcpus $CPU --disk $NAME.qcow2,format=qcow2,bus=virtio --network bridge=virbr0,model=virtio --os-type=linux
