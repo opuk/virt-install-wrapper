@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash 
 
 NAME=$1
 MEM=$2
@@ -6,18 +6,30 @@ CPU=2
 
 WORKDIR=/var/lib/libvirt/images
 #IMAGE=$WORKDIR/Fedora-Cloud-Base-25-1.3.x86_64.qcow2
-IMAGE=$WORKDIR/CentOS-7-x86_64-GenericCloud.qcow2
-#IMAGE=$WORKDIR/rhel-guest-image-7.3-35.x86_64.qcow2
+#IMAGE=$WORKDIR/CentOS-7-x86_64-GenericCloud.qcow2
+IMAGE=$WORKDIR/rhel-guest-image-7.4-263.x86_64.qcow2
 
 RUN_AFTER=true
-RESIZE_DISK=true
+RESIZE_DISK=false
 DISK_SIZE=20G
+EXTRA_DISK=false
+EXTRA_DISK_SIZE=10
+OS=rhel7.4
+
+DOMAIN=example.com
 
 pushd $WORKDIR
 
 cp $IMAGE $NAME.qcow2
 echo "$(date -R) Power off the vm to finish installation."
-virt-install --import --name $NAME --ram $MEM --vcpus $CPU --disk $NAME.qcow2,format=qcow2,bus=virtio --network bridge=virbr0,model=virtio --os-type=linux
+
+if $EXTRA_DISK; then
+  virt-install --noautoconsole --noreboot --import --name $NAME --ram $MEM --vcpus $CPU --disk $NAME.qcow2,format=qcow2,bus=virtio --network bridge=virbr0,model=virtio --os-variant $OS  --disk $1-extra.qcow2,format=qcow2,size=$EXTRA_DISK_SIZE
+else
+  virt-install --noautoconsole --noreboot --import --name $NAME --ram $MEM --vcpus $CPU --disk $NAME.qcow2,format=qcow2,bus=virtio --network bridge=virbr0,model=virtio --os-variant $OS
+fi
+
+virt-customize -a $WORKDIR/$1.qcow2 --run-command "echo $1.$DOMAIN > /etc/hostname"
 
 if $RESIZE_DISK; then
   echo "$(date -R) Resizing the disk..."
@@ -46,4 +58,5 @@ if $RUN_AFTER; then
 
   echo "$(date -R) DONE, ssh to the $ip host using 'fedora' or 'cloud-user' username and password 'fedora'"
 fi
+
 
