@@ -56,7 +56,7 @@ if $RUN_AFTER; then
     fi
   done
 
-  echo "$(date -R) DONE, ssh to the $ip host using 'fedora' or 'cloud-user' username and password 'fedora'"
+  echo "$(date -R) DONE, ssh to $ip to access $NAME"
 fi
 
 
