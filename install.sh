@@ -13,8 +13,9 @@ TIMEZONE="Europe/Stockholm"
 
 RUN_AFTER=true
 DISK_SIZE=15G
-EXTRA_DISK=true
 EXTRA_DISK_SIZE=15
+#Comment out this line if you don't need a extra disk
+#SECONDARY_DISK="--disk path=${WORKDIR}/$NAME-extra.qcow2,device=disk,bus=virtio,format=qcow2,size=$EXTRA_DISK_SIZE"
 
 NETWORK_PRIMARY=default
 DOMAIN=example.com
@@ -33,12 +34,7 @@ virt-customize -a $NAME.qcow2 \
 virt-install --ram $MEM --vcpus $CPU --os-variant rhel7 \
    --disk path=${WORKDIR}/$NAME.qcow2,device=disk,bus=virtio,format=qcow2 \
    --import --noautoconsole --vnc --network network:$NETWORK_PRIMARY \
-   --name $NAME --cpu host,+vmx \
-   --dry-run --print-xml > /tmp/$NAME.xml
-
-virsh define --file /tmp/$NAME.xml
-
-rm /tmp/$NAME.xml
+   --name $NAME --cpu host,+vmx $SECONDARY_DISK 
 
 if $RUN_AFTER; then
   echo "$(date -R) Launching the $1 domain..."
