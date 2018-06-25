@@ -8,36 +8,37 @@ WORKDIR=/var/lib/libvirt/images
 #IMAGE=$WORKDIR/Fedora-Cloud-Base-25-1.3.x86_64.qcow2
 #IMAGE=$WORKDIR/CentOS-7-x86_64-GenericCloud.qcow2
 IMAGE=$WORKDIR/rhel-server-7.5-x86_64-kvm.qcow2
+ROOTPASS=redhat123
+TIMEZONE="Europe/Stockholm"
 
 RUN_AFTER=true
-RESIZE_DISK=true
 DISK_SIZE=15G
 EXTRA_DISK=true
 EXTRA_DISK_SIZE=15
-OS=rhel7.4
 
+NETWORK_PRIMARY=default
 DOMAIN=example.com
 
 pushd $WORKDIR
 
-cp $IMAGE $NAME.qcow2
-echo "$(date -R) Power off the vm to finish installation."
+qemu-img create -f qcow2 $NAME.qcow2 $DISK_SIZE
 
-if $EXTRA_DISK; then
-  virt-install --noautoconsole --noreboot --import --name $NAME --ram $MEM --vcpus $CPU --disk $NAME.qcow2,format=qcow2,bus=virtio --network bridge=virbr0,model=virtio --os-variant $OS  --disk $1-extra.qcow2,format=qcow2,size=$EXTRA_DISK_SIZE
-else
-  virt-install --noautoconsole --noreboot --import --name $NAME --ram $MEM --vcpus $CPU --disk $NAME.qcow2,format=qcow2,bus=virtio --network bridge=virbr0,model=virtio --os-variant $OS
-fi
+virt-resize --expand /dev/sda1 ${IMAGE} $NAME.qcow2
+virt-customize -a $NAME.qcow2 \
+  --hostname $NAME.$DOMAIN \
+  --root-password password:$ROOTPASS \
+  --uninstall cloud-init \
+  --timezone "$TIMEZONE"
+  
+virt-install --ram $MEM --vcpus $CPU --os-variant rhel7 \
+   --disk path=${WORKDIR}/$NAME.qcow2,device=disk,bus=virtio,format=qcow2 \
+   --import --noautoconsole --vnc --network network:$NETWORK_PRIMARY \
+   --name $NAME --cpu host,+vmx \
+   --dry-run --print-xml > /tmp/$NAME.xml
 
-virt-customize -a $WORKDIR/$1.qcow2 --run-command "echo $1.$DOMAIN > /etc/hostname"
+virsh define --file /tmp/$NAME.xml
 
-if $RESIZE_DISK; then
-  echo "$(date -R) Resizing the disk..."
-  virt-filesystems --long -h --all -a $NAME.qcow2
-  qemu-img create -f qcow2 -o preallocation=metadata $NAME.qcow2.new $DISK_SIZE 
-  virt-resize --quiet --expand /dev/sda1 $NAME.qcow2 $NAME.qcow2.new 
-  mv $NAME.qcow2.new $NAME.qcow2
-fi
+rm /tmp/$NAME.xml
 
 if $RUN_AFTER; then
   echo "$(date -R) Launching the $1 domain..."
