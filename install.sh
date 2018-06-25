@@ -7,13 +7,13 @@ CPU=2
 WORKDIR=/var/lib/libvirt/images
 #IMAGE=$WORKDIR/Fedora-Cloud-Base-25-1.3.x86_64.qcow2
 #IMAGE=$WORKDIR/CentOS-7-x86_64-GenericCloud.qcow2
-IMAGE=$WORKDIR/rhel-guest-image-7.4-263.x86_64.qcow2
+IMAGE=$WORKDIR/rhel-server-7.5-x86_64-kvm.qcow2
 
 RUN_AFTER=true
-RESIZE_DISK=false
-DISK_SIZE=20G
-EXTRA_DISK=false
-EXTRA_DISK_SIZE=10
+RESIZE_DISK=true
+DISK_SIZE=15G
+EXTRA_DISK=true
+EXTRA_DISK_SIZE=15
 OS=rhel7.4
 
 DOMAIN=example.com
