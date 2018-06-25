@@ -12,7 +12,7 @@ ROOTPASS=redhat123
 TIMEZONE="Europe/Stockholm"
 
 RUN_AFTER=true
-DISK_SIZE=15G
+DISK_SIZE=40G
 EXTRA_DISK_SIZE=15
 #Comment out this line if you don't need a extra disk
 #SECONDARY_DISK="--disk path=${WORKDIR}/$NAME-extra.qcow2,device=disk,bus=virtio,format=qcow2,size=$EXTRA_DISK_SIZE"
@@ -29,7 +29,8 @@ virt-customize -a $NAME.qcow2 \
   --hostname $NAME.$DOMAIN \
   --root-password password:$ROOTPASS \
   --uninstall cloud-init \
-  --timezone "$TIMEZONE"
+  --timezone "$TIMEZONE" \
+  --selinux-relabel
   
 virt-install --ram $MEM --vcpus $CPU --os-variant rhel7 \
    --disk path=${WORKDIR}/$NAME.qcow2,device=disk,bus=virtio,format=qcow2 \
