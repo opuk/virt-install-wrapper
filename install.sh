@@ -7,7 +7,7 @@ CPU=2
 WORKDIR=/var/lib/libvirt/images
 #IMAGE=$WORKDIR/Fedora-Cloud-Base-25-1.3.x86_64.qcow2
 #IMAGE=$WORKDIR/CentOS-7-x86_64-GenericCloud.qcow2
-IMAGE=$WORKDIR/rhel-server-7.6-x86_64-kvm.qcow
+IMAGE=$WORKDIR/rhel-server-7.6-x86_64-kvm.qcow2
 ROOTPASS=redhat123
 TIMEZONE="Europe/Stockholm"
 
