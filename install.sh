@@ -32,6 +32,7 @@ OS="rhel7.5"
 ROOTPASS=redhat123
 
 DOMAIN=example.com
+PRIMARY_NETWORK=default
 
 while [[ $# -ge 1 ]]; do
    key="$1"
@@ -116,7 +117,7 @@ virt-install --noautoconsole --noreboot \
       --vcpus $CPU \
       --import \
       --disk $NAME.qcow2,format=qcow2,bus=virtio \
-      --network bridge=virbr0,model=virtio \
+      --network network:$PRIMARY_NETWORK \
       --os-variant $OS \
       $disk_args
 
