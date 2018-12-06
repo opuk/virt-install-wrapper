@@ -16,9 +16,9 @@ function print_help {
 }
 
 NAME=""
-MEM="16384"
+MEM="2048"
 CPU="4"
-DISK_SIZE="50G"
+DISK_SIZE="40G"
 EXTRA_DISKS=""
 
 WORKDIR=/var/lib/libvirt/images
@@ -34,14 +34,7 @@ ROOTPASS=redhat123
 DOMAIN=example.com
 PRIMARY_NETWORK=provisioning
 
-#OSP networks
-PROV_NET=$PRIMARY_NETWORK
-TRUNK_NET=trunk
-PUBLIC_NET=public
-
-NETWORKS="--network network:$PROV_NET --network network:$TRUNK_NET --network network:$TRUNK_NET --network network:$PUBLIC_NET"
-
-
+#ADDITIONAL_NICS="--network network:trunk"
 
 while [[ $# -ge 1 ]]; do
    key="$1"
@@ -128,7 +121,8 @@ virt-install --noautoconsole --noreboot \
       --vcpus $CPU \
       --import \
       --disk $NAME.qcow2,format=qcow2,bus=virtio \
-      $NETWORKS \
+      --network network:$PRIMARY_NETWORK \
+      $ADDITIONAL_NICS \
       --os-variant $OS \
       --cpu host,+vmx \
       $disk_args
