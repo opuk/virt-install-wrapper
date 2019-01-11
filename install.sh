@@ -1,4 +1,4 @@
-#!/bin/bash 
+#!/bin/bash
 
 
 function print_help {
@@ -17,7 +17,7 @@ function print_help {
 
 NAME=""
 MEM="2048"
-CPU="2"
+CPU="4"
 DISK_SIZE="40G"
 EXTRA_DISKS=""
 
@@ -26,13 +26,18 @@ IMAGE=$WORKDIR/rhel-server-7.6-x86_64-kvm.qcow2
 
 RUN_AFTER=1
 RESIZE_DISK=1
-DISK_SIZE="40G"
-OS="rhel7.5"
+OS="rhel7.6"
+TIMEZONE="Europe/Stockholm"
 
 ROOTPASS=redhat123
 
 DOMAIN=example.com
-PRIMARY_NETWORK=default
+PRIMARY_NETWORK=internal
+
+#override if file exists
+. install-env
+
+#ADDITIONAL_NICS="--network network:provisioning"
 
 while [[ $# -ge 1 ]]; do
    key="$1"
@@ -115,9 +120,11 @@ virt-install --noautoconsole --noreboot \
       --name $NAME \
       --ram $MEM \
       --vcpus $CPU \
+      --cpu host,+vmx \
       --import \
       --disk $NAME.qcow2,format=qcow2,bus=virtio \
       --network network:$PRIMARY_NETWORK \
+      $ADDITIONAL_NICS \
       --os-variant $OS \
       $disk_args
 
