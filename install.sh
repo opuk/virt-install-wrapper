@@ -22,7 +22,8 @@ DISK_SIZE="40G"
 EXTRA_DISKS=""
 
 WORKDIR=/var/lib/libvirt/images
-IMAGE=$WORKDIR/rhel-server-7.6-x86_64-kvm.qcow2
+#IMAGE=$WORKDIR/rhel-server-7.6-x86_64-kvm.qcow2
+IMAGE=$WORKDIR/Fedora-Cloud-Base-29-1.2.x86_64.qcow2
 
 RUN_AFTER=1
 RESIZE_DISK=1
@@ -32,7 +33,7 @@ TIMEZONE="Europe/Stockholm"
 ROOTPASS=redhat123
 
 DOMAIN=example.com
-PRIMARY_NETWORK=internal
+PRIMARY_NETWORK=default
 
 #override if file exists
 . install-env
